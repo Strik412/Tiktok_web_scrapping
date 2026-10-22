@@ -133,11 +133,11 @@ python app.py --username _rl9 --posts 10
 *Note: A Chrome window will open. The bot uses random sleep intervals and silent navigation. If TikTok hides the data, the script triggers a manual fallback allowing you to solve CAPTCHAs.*
 
 <p align="center">
-  Images/Extraction1.png
+  <img src="Images/Extraction1.png" width="800" alt="Scraping Log 1"><br>
   <em>Manual fallback intervention during extraction.</em>
 </p>
 <p align="center">
-Images/Extraction2.png
+  <img src="Images/Extraction2.png" width="800" alt="Scraping Log 2"><br>
   <em>Humanized browsing successfully evading the 403 firewall.</em>
 </p>
 
@@ -151,7 +151,7 @@ python analisis/nlp.py
 ```
 
 <p align="center">
- Images/NLP.png
+  <img src="Images/NLP.png" width="1000" alt="NLP Dashboard"><br>
   <em>Interactive Dashboard showing TF-IDF Keywords, Semantic Cosine Similarity, and PCA Clustering.</em>
 </p>
 
@@ -164,8 +164,8 @@ python analisis/analisis_big_five.py
 
 ```
 <p align="center">
-Images/BIG1.png
-Images/BIG2.png
+  <img src="Images/BIG1.png" width="800" alt="Big Five Analysis 1"><br>
+  <img src="Images/BIG2.png" width="800" alt="Big Five Analysis 2"><br>
   <em>Zero-Shot Digital Phenotyping results leveraging Google's Gemini SDK.</em>
 </p>
 
