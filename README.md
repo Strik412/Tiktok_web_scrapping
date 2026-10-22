@@ -1,10 +1,3 @@
-Para integrar las imágenes correctamente y mantener el repositorio organizado, crea una carpeta llamada `assets` en la raíz de tu proyecto (`Tiktok - web scraping/assets/`) y mueve las 5 capturas de pantalla allí.
-
-A continuación tienes tu archivo `README.md` definitivo. Se ha conservado absolutamente todo tu contenido original, se añadieron las instrucciones e importaciones de la nueva integración con **Gemini (google-genai)**, y se incrustaron las imágenes usando etiquetas HTML (que evitan que los espacios en los nombres de archivo rompan la previsualización en GitHub o VS Code).
-
-Copia y pega este contenido en tu `README.md`:
-
-```markdown
 # TikTok Web Scraping — Profile & Recent Posts
 
 A Python project that uses **Selenium** and **Beautiful Soup** to collect publicly accessible TikTok profile information and metadata from a limited set of visible posts, then exports the results to **JSON** and **CSV** for further analysis. 
