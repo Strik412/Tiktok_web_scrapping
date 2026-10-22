@@ -1,6 +1,8 @@
 # TikTok Web Scraping — Profile & Recent Posts
 
-A Python project that uses **Selenium** and **Beautiful Soup** to collect publicly accessible TikTok profile information and metadata from a limited set of visible posts, then exports the results to **JSON** and **CSV** for further analysis.
+A Python project that uses **Selenium** and **Beautiful Soup** to collect publicly accessible TikTok profile information and metadata from a limited set of visible posts, then exports the results to **JSON** and **CSV** for further analysis. 
+
+This project now also features an **Advanced NLP & Semantic Analysis** pipeline to extract insights, keywords, and semantic clusters from the downloaded posts.
 
 ## Features
 
@@ -11,6 +13,10 @@ A Python project that uses **Selenium** and **Beautiful Soup** to collect public
 - Visit a configurable number of candidate post pages and try to extract descriptions, timestamps, engagement metrics, hashtags, music, and cover images.
 - Sort posts with available publication timestamps in descending order and export up to the requested number of posts (10 by default).
 - Save the extracted profile and post records in UTF-8-compatible JSON and CSV files.
+- **[NEW] Anti-Bot Scraping:** Uses `undetected-chromedriver` and persistent browser profiles to safely bypass TikTok's firewall (Error 403), with a human-in-the-loop fallback to solve CAPTCHAs manually.
+- **[NEW] NLP Text Processing:** Cleans post descriptions by removing URLs, mentions, and special characters, and extracts the most relevant keywords using **TF-IDF**.
+- **[NEW] Semantic Embeddings:** Uses HuggingFace's `Sentence-Transformers` (Multilingual MiniLM) to convert text into 384-dimensional semantic vectors.
+- **[NEW] Visual Analytics:** Generates interactive dashboards featuring Top Keywords (Bar Chart), Semantic Cosine Similarity (Heatmap), and 2D Semantic Clustering (PCA Scatter Plot).
 
 **Important:** The scraper can return incomplete data. TikTok may change its page structure, require verification, withhold fields, or limit publicly accessible content. The tool does **not** guarantee that the exported posts are the account's absolute latest 10 posts. See [Limitations](#limitations).
 
@@ -22,7 +28,13 @@ A Python project that uses **Selenium** and **Beautiful Soup** to collect public
 | Selenium | Browser automation with Chrome |
 | Google Chrome | Browser used to load TikTok pages |
 | Beautiful Soup 4 | HTML parsing and metadata extraction |
-| Python standard library | `argparse`, `csv`, `json`, `re`, `time`, `datetime`, `pathlib`, `urllib.parse` |
+| Undetected-Chromedriver | Advanced browser automation bypassing bot detection |
+| Pandas & NumPy | Data manipulation and structuring |
+| Scikit-learn | TF-IDF, Cosine Similarity, and PCA reduction |
+| Sentence-Transformers | HuggingFace multilingual semantic embeddings |
+| NLTK | Natural Language Toolkit for stopwords |
+| Matplotlib & Seaborn | Data visualization and plotting |
+| Python standard library | `argparse`, `csv`, `json`, `re`, `time`, `datetime`, `pathlib`, `urllib.parse`, `random` |
 
 **No TikTok API credentials are required.** The application reads what is available through the web page, not through the official TikTok API.
 
@@ -31,23 +43,27 @@ A Python project that uses **Selenium** and **Beautiful Soup** to collect public
 ```text
 Tiktok - web scraping/
 ├── app.py                     # Main scraper
+├── analisis/
+│   └── nlp.py                 # NLP, Embeddings, and Visualization script
 ├── README.md                  # Project documentation
 ├── .gitignore                 # Recommended (see below)
 ├── .venv/                     # Local Python environment (not committed)
+├── Perfil_TikTok/             # Persistent Chrome profile data (auto-generated)
 └── resultados/                # Created at runtime
     └── <username>/
         ├── perfil_completo.json
         ├── perfil.csv
         ├── ultimos_10_posts.json
         └── ultimos_10_posts.csv
+
 ```
 
 ## Prerequisites
 
-- Windows, macOS, or Linux with **Python 3** installed (Python 3.10+ recommended).
-- **Google Chrome** installed.
-- A working Internet connection.
-- VS Code or another editor (optional).
+* Windows, macOS, or Linux with **Python 3** installed (Python 3.10+ recommended).
+* **Google Chrome** installed.
+* A working Internet connection.
+* VS Code or another editor (optional).
 
 Recent Selenium versions normally use Selenium Manager to resolve an appropriate ChromeDriver automatically. Driver installation can still fail in restricted environments or when Chrome and the driver cannot be matched.
 
@@ -56,31 +72,35 @@ Recent Selenium versions normally use Selenium Manager to resolve an appropriate
 1. Open the project folder in VS Code (**File → Open Folder**).
 2. Open a terminal (**Terminal → New Terminal**).
 3. Create a virtual environment:
+```powershell
+python -m venv .venv
 
-   ```powershell
-   python -m venv .venv
-   ```
+```
+
 
 4. Activate the environment:
+```powershell
+.\.venv\Scripts\Activate.ps1
 
-   ```powershell
-   .\.venv\Scripts\Activate.ps1
-   ```
+```
+
 
 5. Install the dependencies:
+```powershell
+python -m pip install --upgrade pip
+python -m pip install selenium undetected-chromedriver beautifulsoup4 pandas scikit-learn sentence-transformers matplotlib seaborn nltk
 
-   ```powershell
-   python -m pip install --upgrade pip
-   python -m pip install selenium beautifulsoup4
-   ```
+```
+
 
 6. Ensure the main script is named **`app.py`** and is located in the project root.
 
 If PowerShell prevents activation, use the environment's interpreter directly:
 
 ```powershell
-.\.venv\Scripts\python.exe -m pip install selenium beautifulsoup4
+.\.venv\Scripts\python.exe -m pip install selenium undetected-chromedriver beautifulsoup4 pandas scikit-learn sentence-transformers matplotlib seaborn nltk
 .\.venv\Scripts\python.exe app.py --username tiktok
+
 ```
 
 ### macOS / Linux
@@ -88,8 +108,9 @@ If PowerShell prevents activation, use the environment's interpreter directly:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install selenium beautifulsoup4
+python -m pip install selenium undetected-chromedriver beautifulsoup4 pandas scikit-learn sentence-transformers matplotlib seaborn nltk
 python app.py --username tiktok
+
 ```
 
 ## Usage
@@ -98,30 +119,44 @@ python app.py --username tiktok
 
 ```powershell
 python app.py
+
 ```
 
 When prompted, enter a username with or without the leading `@`:
 
 ```text
 Username de TikTok: tiktok
+
 ```
 
 ### Command-line mode
 
 ```powershell
 python app.py --username tiktok
+
 ```
 
 ### Request up to 10 posts
 
 ```powershell
 python app.py --username tiktok --posts 10 --scrolls 6 --candidatos 25
+
 ```
 
 ### Inspect more candidate posts
 
 ```powershell
 python app.py --username tiktok --posts 10 --scrolls 8 --candidatos 30
+
+```
+
+### Semantic Analysis (NLP)
+
+After successfully extracting data into the `resultados/` folder, run the NLP script to generate the visualizations. Make sure you update the `username` variable inside `nlp.py` to match the extracted account.
+
+```powershell
+python analisis/nlp.py
+
 ```
 
 ### CLI arguments
@@ -138,15 +173,22 @@ The username is checked against the script's accepted pattern: 1–24 characters
 ## How It Works
 
 1. **Input validation:** `main()` reads and validates the username and numeric options.
-2. **Browser startup:** Selenium launches Chrome with a 1280 × 900 window.
-3. **Profile loading:** `recopilar_enlaces()` opens `https://www.tiktok.com/@<username>` and waits for the document's main load to finish.
+2. **Browser startup:** Selenium launches Chrome with a 1280 × 900 window using `undetected-chromedriver` and a persistent profile (`Perfil_TikTok/`).
+3. **Profile loading:** The bot opens `https://www.tiktok.com/@<username>` and pauses. *A human-in-the-loop manual intervention is required here to solve CAPTCHAs and scroll down to load post thumbnails.*
 4. **Profile parsing:** `obtener_perfil()` looks for user data in embedded JSON scripts named `__UNIVERSAL_DATA_FOR_REHYDRATION__` and `SIGI_STATE`, with HTML Open Graph metadata as a fallback for selected fields.
 5. **Post discovery:** `obtener_enlaces()` finds links matching the profile's `/video/<id>` or `/photo/<id>` paths. Additional scrolls may expose more links.
 6. **Candidate inspection:** The discovered links are **sorted lexicographically**, and only the first `--candidatos` links are visited. This selection is **not chronological**.
-7. **Post parsing:** `extraer_post()` looks for post details in embedded JSON (`webapp.video-detail` or legacy `ItemModule`) and uses page metadata for a description fallback.
+7. **Post parsing (Silent Navigation):** `extraer_post()` uses JavaScript navigation (`window.location.href`) and random time sleeps to evade 403 Forbidden errors, looking for post details in embedded JSON.
 8. **Ordering:** Posts with valid publication timestamps are sorted newest first. Records with missing timestamps are placed afterward.
 9. **Export:** `guardar_resultados()` writes the profile and the selected post records into a username-specific directory under `resultados/`.
 10. **Cleanup:** Selenium closes Chrome in a `finally` block.
+
+### NLP & Semantic Analysis Pipeline (`nlp.py`)
+
+1. **Cleaning:** The script reads the generated CSV, removes URLs, mentions, and special characters from post descriptions.
+2. **TF-IDF Extraction:** NLTK filters out English/Spanish stopwords and Scikit-learn calculates the top keywords defining the account's content.
+3. **Semantic Embeddings:** A pre-trained HuggingFace model (`paraphrase-multilingual-MiniLM-L12-v2`) converts text into mathematical vectors.
+4. **Visualization:** Matplotlib plots a Bar Chart (Keywords), a Cosine Similarity Heatmap (to find duplicate or related content), and a PCA 2D Scatter Plot (to visually cluster posts talking about similar topics).
 
 ### Main Functions
 
@@ -171,12 +213,13 @@ The output directory is created automatically:
 
 ```text
 resultados/<username>/
+
 ```
 
 ### Profile files
 
-- **`perfil_completo.json`** — one JSON object with profile fields.
-- **`perfil.csv`** — one-row CSV with the same fields.
+* **`perfil_completo.json`** — one JSON object with profile fields.
+* **`perfil.csv`** — one-row CSV with the same fields.
 
 Potential profile fields:
 
@@ -196,8 +239,8 @@ Potential profile fields:
 
 ### Post files
 
-- **`ultimos_10_posts.json`** — list of up to `--posts` records.
-- **`ultimos_10_posts.csv`** — tabular version of the selected posts.
+* **`ultimos_10_posts.json`** — list of up to `--posts` records.
+* **`ultimos_10_posts.csv`** — tabular version of the selected posts.
 
 The filenames contain “10” for compatibility with the current implementation, **even if `--posts` is set to a different number**.
 
@@ -220,36 +263,47 @@ The filenames contain “10” for compatibility with the current implementation
 
 **Missing values:** JSON may contain `null`, and CSV cells may be blank. Missing metrics must not be interpreted as zero.
 
-
 ## Troubleshooting
 
-**`python: can't open file '.../app.py'`**  
+**`python: can't open file '.../app.py'`**
+
 Check that the terminal is open in the correct project folder and the file is actually named `app.py`:
 
 ```powershell
 Get-Location
 Get-ChildItem -Name
 python .\app.py --username tiktok
+
 ```
 
-**`ModuleNotFoundError: No module named 'selenium'`**  
+**`ModuleNotFoundError: No module named 'selenium'` (or other libraries)**
+
 Install packages into the same interpreter used to run the script:
 
 ```powershell
-python -m pip install selenium beautifulsoup4
+python -m pip install selenium undetected-chromedriver beautifulsoup4 pandas scikit-learn sentence-transformers matplotlib seaborn nltk
+
 ```
 
-**Chrome / ChromeDriver cannot start**  
+**Chrome / ChromeDriver cannot start**
+
 Confirm that Chrome is installed, update Selenium, and verify that your environment can download or locate the appropriate driver:
 
 ```powershell
-python -m pip install --upgrade selenium
+python -m pip install --upgrade selenium undetected-chromedriver
+
 ```
 
-**Zero posts or empty fields**  
-TikTok may not have exposed post links or embedded metadata in the page response. Inspect the visible page in Chrome. Do not interpret missing values as valid zero counts and do not attempt to bypass verification challenges.
+**HTTP Error 403 or "Access Denied"**
 
-**Fewer than 10 posts saved**  
+TikTok's firewall has temporarily blacklisted your IP address. Switch your connection to a mobile hotspot or restart your router to obtain a new IP address, then run the script again.
+
+**Zero posts or empty fields**
+
+TikTok may not have exposed post links or embedded metadata in the page response. The script pauses intentionally to allow you to manually solve CAPTCHAs or scroll the page before pressing ENTER.
+
+**Fewer than 10 posts saved**
+
 Only discovered and inspected posts can be exported. Try a modestly larger `--scrolls` or `--candidatos` value when access is permitted, and remember that the script cannot guarantee a complete chronology.
 
 ## Recommended `.gitignore`
@@ -263,8 +317,14 @@ __pycache__/
 .env
 resultados/
 analisis/resultados/
+Perfil_TikTok/
 *.npy
 .DS_Store
+
 ```
 
-This avoids committing local dependencies, potentially sensitive extracted data, and future generated artifacts.
+This avoids committing local dependencies, potentially sensitive extracted data, browser cookies, and future generated artifacts.
+
+```
+
+```
