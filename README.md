@@ -132,7 +132,14 @@ python app.py --username _rl9 --posts 10
 
 *Note: A Chrome window will open. The bot uses random sleep intervals and silent navigation. If TikTok hides the data, the script triggers a manual fallback allowing you to solve CAPTCHAs.*
 
-![alt text](<Captura de pantalla 2026-10-22 054529.png>) ![alt text](<Captura de pantalla 2026-10-22 054517.png>)
+<p align="center">
+  <img src="assets/Captura%20de%20pantalla%202026-10-22%20054517.png" width="800" alt="Scraping Log 1"><br>
+  <em>Manual fallback intervention during extraction.</em>
+</p>
+<p align="center">
+  <img src="assets/Captura%20de%20pantalla%202026-10-22%20054529.png" width="800" alt="Scraping Log 2"><br>
+  <em>Humanized browsing successfully evading the 403 firewall.</em>
+</p>
 
 ### Step 2: Semantic Analysis (NLP)
 
@@ -143,7 +150,10 @@ python analisis/nlp.py
 
 ```
 
-![alt text](<Captura de pantalla 2026-10-22 055256.png>)
+<p align="center">
+  <img src="assets/Captura%20de%20pantalla%202026-10-22%20055256.png" width="1000" alt="NLP Dashboard"><br>
+  <em>Interactive Dashboard showing TF-IDF Keywords, Semantic Cosine Similarity, and PCA Clustering.</em>
+</p>
 
 ### Step 3: Generative AI Profiling (Big Five)
 
@@ -153,8 +163,11 @@ To generate the psychological profile based on the linguistic choices of the use
 python analisis/analisis_big_five.py
 
 ```
-
-![alt text](<Captura de pantalla 2026-10-22 140427.png>) ![alt text](<Captura de pantalla 2026-10-22 140413.png>)
+<p align="center">
+  <img src="assets/Captura%20de%20pantalla%202026-10-22%20140413.png" width="800" alt="Big Five Analysis 1"><br>
+  <img src="assets/Captura%20de%20pantalla%202026-10-22%20140427.png" width="800" alt="Big Five Analysis 2"><br>
+  <em>Zero-Shot Digital Phenotyping results leveraging Google's Gemini SDK.</em>
+</p>
 
 ## How It Works
 
