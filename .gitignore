@@ -4,3 +4,5 @@ __pycache__/
 .env
 resultados/
 *.csv
+debug/
+Perfil_Tiktok/
