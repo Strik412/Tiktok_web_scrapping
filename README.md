@@ -2,8 +2,6 @@
 
 A Python project that uses **Selenium** and **Beautiful Soup** to collect publicly accessible TikTok profile information and metadata from a limited set of visible posts, then exports the results to **JSON** and **CSV** for further analysis.
 
-> **Current scope:** This README describes the `app.py` scraper in this repository. Natural language processing (NLP), text embeddings, personality assessment, and interactive dashboards are **not part of this script**. They are possible future modules, described in [Roadmap](#roadmap).
-
 ## Features
 
 - Accept a TikTok username interactively or through a command-line argument.
