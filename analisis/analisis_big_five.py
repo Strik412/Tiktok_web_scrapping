@@ -3,7 +3,7 @@ from google import genai
 from pathlib import Path
 
 # Configura tu clave de API aquí
-API_KEY = "AQ.Ab8RN6J37TVIsbGkEf3teZcPmD4w1tQntClS34uBcI2Kz6446A"
+API_KEY = "---------------"
 client = genai.Client(api_key=API_KEY)
 
 def main():
